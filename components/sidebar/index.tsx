@@ -14,6 +14,7 @@ import {
   HomeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -33,6 +34,7 @@ function classNames(...classes: string[]) {
 function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const pathname = usePathname();
   return (
     <>
       <div>
@@ -85,7 +87,7 @@ function Sidebar() {
                             <a
                               href={item.href}
                               className={classNames(
-                                item.current
+                                item.href === pathname
                                   ? "bg-white/5 text-white"
                                   : "text-gray-400 hover:bg-white/5 hover:text-white",
                                 "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
@@ -128,7 +130,7 @@ function Sidebar() {
                         <a
                           href={item.href}
                           className={classNames(
-                            item.current
+                            item.href === pathname
                               ? "bg-white/5 text-white"
                               : "text-gray-400 hover:bg-white/5 hover:text-white",
                             "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
