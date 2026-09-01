@@ -1,11 +1,10 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
+import { useState } from "react";
+import { Dialog, DialogBackdrop } from "@headlessui/react";
 
 export default function Modal(children: React.ReactNode) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(true);
 
   return (
     <div>
@@ -22,9 +21,9 @@ export default function Modal(children: React.ReactNode) {
         />
 
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-         {children}
+          {children}
         </div>
       </Dialog>
     </div>
-  )
+  );
 }
