@@ -45,7 +45,7 @@ function Sidebar() {
         >
           <DialogBackdrop
             transition
-            className="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
+            className="fixed inset-0 bg-white/10 backdrop-blur-sm transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
           />
 
           <div className="fixed inset-0 flex">
@@ -111,9 +111,9 @@ function Sidebar() {
         </Dialog>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden bg-black lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="hidden bg-white/10 backdrop-blur-sm lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 px-6">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 px-6">
             <div className="flex h-16 shrink-0 items-center">
               <img
                 alt="Your Company"
@@ -166,7 +166,7 @@ function Sidebar() {
           </div>
         </div>
 
-        <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow sm:px-6 lg:hidden">
+        <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white/10 backdrop-blur-sm px-4 py-4 shadow sm:px-6 lg:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
