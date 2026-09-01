@@ -72,7 +72,7 @@ function Sidebar() {
                 <div className="relative flex h-16 shrink-0 items-center">
                   <img
                     alt="Your Company"
-                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                    src="/logo.svg"
                     className="h-8 w-auto"
                   />
                 </div>
@@ -109,13 +109,13 @@ function Sidebar() {
         </Dialog>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden bg-gray-900 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="hidden bg-black lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 px-6">
             <div className="flex h-16 shrink-0 items-center">
               <img
                 alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                src="/logo.svg"
                 className="h-8 w-auto"
               />
             </div>
@@ -152,7 +152,7 @@ function Sidebar() {
                   >
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src="/logo.svg"
                       className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
                     />
                     <span className="sr-only">Your profile</span>
@@ -180,7 +180,7 @@ function Sidebar() {
             <span className="sr-only">Your profile</span>
             <img
               alt=""
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              src="/logo.svg"
               className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
             />
           </a>
