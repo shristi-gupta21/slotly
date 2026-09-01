@@ -10,26 +10,20 @@ import {
 import {
   Bars3Icon,
   CalendarIcon,
-  ChartPieIcon,
   DocumentDuplicateIcon,
-  FolderIcon,
   HomeIcon,
-  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+  { name: "Events", href: "/events", icon: CalendarIcon, current: false },
+  {
+    name: "Bookings",
+    href: "/bookings",
+    icon: DocumentDuplicateIcon,
+    current: false,
+  },
 ];
 
 function classNames(...classes: string[]) {
@@ -41,14 +35,6 @@ function Sidebar() {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Dialog
           open={sidebarOpen}
@@ -115,31 +101,6 @@ function Sidebar() {
                         ))}
                       </ul>
                     </li>
-                    <li>
-                      <div className="text-xs/6 font-semibold text-gray-400">
-                        Your teams
-                      </div>
-                      <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {teams.map((team) => (
-                          <li key={team.name}>
-                            <a
-                              href={team.href}
-                              className={classNames(
-                                team.current
-                                  ? "bg-gray-800 text-white"
-                                  : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                              )}
-                            >
-                              <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:border-white/20 group-hover:text-white">
-                                {team.initial}
-                              </span>
-                              <span className="truncate">{team.name}</span>
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
                   </ul>
                 </nav>
               </div>
@@ -183,31 +144,7 @@ function Sidebar() {
                     ))}
                   </ul>
                 </li>
-                <li>
-                  <div className="text-xs/6 font-semibold text-gray-400">
-                    Your teams
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.name}>
-                        <a
-                          href={team.href}
-                          className={classNames(
-                            team.current
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:bg-white/5 hover:text-white",
-                            "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                          )}
-                        >
-                          <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
+
                 <li className="-mx-6 mt-auto">
                   <a
                     href="#"
@@ -248,10 +185,6 @@ function Sidebar() {
             />
           </a>
         </div>
-
-        <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">{/* Your content */}</div>
-        </main>
       </div>
     </>
   );
