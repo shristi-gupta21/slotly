@@ -1,6 +1,7 @@
 import { Disclosure } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { BellIcon } from "@heroicons/react/24/outline";
+import Button from "./button";
 
 export default function Header() {
   return (
@@ -8,7 +9,7 @@ export default function Header() {
       as="header"
       className="relative bg-white/10 backdrop-blur-sm after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10"
     >
-      <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-white/10 lg:px-8">
+      <div className="mx-auto  sm:px-4 lg:divide-y lg:divide-white/10 lg:px-8">
         <div className=" flex h-16 justify-between">
           <div className="relative z-0 flex flex-1 items-center justify-center px-2 sm:inset-0">
             <div className="grid w-full grid-cols-1 sm:max-w-xs">
@@ -24,7 +25,8 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center">
+          <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center gap-4">
+            <Button label="Create Event" size="md" />
             <button
               type="button"
               className="relative shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
