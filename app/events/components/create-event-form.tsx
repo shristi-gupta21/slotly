@@ -82,7 +82,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-export default function CreateEventForm() {
+export default function CreateEventForm({ onClose }: { onClose: () => void }) {
   const [errors, setErrors] = useState<FieldErrors>({});
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -110,6 +110,7 @@ export default function CreateEventForm() {
 
     setErrors({});
     console.log(result.data);
+    onClose();
   }
 
   return (

@@ -52,8 +52,8 @@ export default function Header() {
         </div>
       </div>
       {showModal && (
-        <Modal>
-          <CreateEventForm />
+        <Modal open={showModal} onClose={() => setShowModal(false)}>
+          <CreateEventForm  onClose={() => setShowModal(false)}/>
         </Modal>
       )}
     </Disclosure>
