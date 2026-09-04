@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Sidebar />
         <main className="lg:pl-72 flex flex-col w-full">
           <Header />
-          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+          <div className="px-4 sm:px-6 lg:px-8 lg:py-8">{children}</div>
         </main>
       </body>
     </html>

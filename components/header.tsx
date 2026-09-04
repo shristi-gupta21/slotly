@@ -1,9 +1,18 @@
+"use client";
+
 import { Disclosure } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { BellIcon } from "@heroicons/react/24/outline";
 import Button from "./button";
+import { useState } from "react";
+import Modal from "./modal";
+import CreateEventForm from "@/app/events/components/create-event-form";
 
 export default function Header() {
+  const [showModal, setShowModal] = useState(false);
+  const handleCreateEvent = () => {
+    setShowModal(true);
+  };
   return (
     <Disclosure
       as="header"
@@ -26,7 +35,11 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center gap-4">
-            <Button label="Create Event" size="md" />
+            <Button
+              label="Create Event"
+              size="md"
+              onClick={handleCreateEvent}
+            />
             <button
               type="button"
               className="relative shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
@@ -38,6 +51,11 @@ export default function Header() {
           </div>
         </div>
       </div>
+      {showModal && (
+        <Modal>
+          <CreateEventForm />
+        </Modal>
+      )}
     </Disclosure>
   );
 }
