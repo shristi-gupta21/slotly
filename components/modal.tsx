@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX,  } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
 export default function Modal({ children, open, onClose }: { children: JSX.Element, open: boolean, onClose: () => void }) {
