@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Genre {
+  music
+  comedy
+  theatre
+  sports
+  workshop
+  exhibition
+  other
+}
+
+enum City {
+  delhi
+  mumbai
+  bengaluru
+  hyderabad
+  chennai
+  kolkata
+  pune
+  jaipur
+  other
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String
+  genre       Genre
+  capacity    Int
+  description String?
+  city        City
+  venue       String
+  date        DateTime @db.Date
+  time        DateTime @db.Time(0)
+  contactName String
+  phone       String
+  email       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
