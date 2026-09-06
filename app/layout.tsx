@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
           <div className="px-4 sm:px-6 lg:px-8 lg:py-8">{children}</div>
         </main>
+        <Toaster />
       </body>
     </html>
   );

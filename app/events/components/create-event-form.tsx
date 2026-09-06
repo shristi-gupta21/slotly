@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { toast } from "sonner";
 import Button from "@/components/button";
 import {
   CITIES,
@@ -38,7 +39,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export default function CreateEventForm({ onClose }: { onClose: () => void }) {
   const [errors, setErrors] = useState<EventFieldErrors>({});
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -63,6 +64,16 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
 
     setErrors({});
     console.log(result.data);
+    const response = await fetch('/api/events', {
+      method:'POST',
+      body: JSON.stringify(result.data),
+    })
+    if(!response.ok) {
+      const error = await response.json();
+      setErrors(error);
+    return;
+    }
+    toast.success('Event created successfully');
     onClose();
   }
 
