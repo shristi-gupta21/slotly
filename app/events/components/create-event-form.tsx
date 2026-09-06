@@ -2,9 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { flattenError, z } from "zod";
 import Button from "@/components/button";
-import { CITIES, CreateEventInput, createEventSchema, EventFieldErrors, GENRES } from "@/lib/validations/events";
+import {
+  CITIES,
+  createEventSchema,
+  fieldErrorsFromZod,
+  GENRES,
+  type EventFieldErrors,
+} from "@/lib/validations/events";
 
 
 
@@ -18,19 +23,6 @@ const selectClassName =
 function fieldValue(formData: FormData, name: string) {
   const value = formData.get(name);
   return typeof value === "string" ? value : "";
-}
-
-function fieldErrorsFromZod(error: z.ZodError): EventFieldErrors {
-  const { fieldErrors } = flattenError(error);
-  const next: EventFieldErrors = {};
-
-  for (const [key, messages] of Object.entries(fieldErrors)) {
-    if (Array.isArray(messages) && messages[0]) {
-      next[key as keyof CreateEventInput] = messages[0];
-    }
-  }
-
-  return next;
 }
 
 function FieldError({ id, message }: { id: string; message?: string }) {

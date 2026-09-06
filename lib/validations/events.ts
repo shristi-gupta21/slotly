@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { flattenError, z } from "zod";
 
 export const  GENRES = [
     "music",
@@ -40,9 +40,22 @@ export const createEventSchema = z.object({
     email: z.email("Enter a valid email"),
   });
 
-  
+
 export const patchEventSchema = createEventSchema.partial();
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type PatchEventInput = z.infer<typeof patchEventSchema>;
 export type EventFieldErrors = Partial<Record<keyof CreateEventInput, string>>;
+
+export function fieldErrorsFromZod(error: z.ZodError): EventFieldErrors {
+  const { fieldErrors } = flattenError(error);
+  const next: EventFieldErrors = {};
+
+  for (const [key, messages] of Object.entries(fieldErrors)) {
+    if (Array.isArray(messages) && messages[0]) {
+      next[key as keyof CreateEventInput] = messages[0];
+    }
+  }
+
+  return next;
+}
