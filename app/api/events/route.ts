@@ -37,6 +37,7 @@ export async function POST(request: Request) {
         contactName: result.data.contactName,
         phone: result.data.phone,
         email: result.data.email,
+        description: result.data.description,
       },
     });
 
