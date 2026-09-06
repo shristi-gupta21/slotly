@@ -32,8 +32,8 @@ export async function POST(request: Request) {
         capacity: result.data.capacity,
         city: result.data.eventCity,
         venue: result.data.venue,
-        date: result.data.date,
-        time: result.data.time,
+        date: new Date(result.data.date),
+        time: new Date(`1970-01-01T${result.data.time}`),
         contactName: result.data.contactName,
         phone: result.data.phone,
         email: result.data.email,
@@ -41,7 +41,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(event, { status: 201 });
-  } catch {
+  } catch(error) {
+    console.error(error);
     return NextResponse.json(
       {
         message: "Please try again later",
