@@ -6,7 +6,7 @@ const Events = async () => {
   const { events } = await result.json();
 
   return (
-    <div>
+    <div className="h-full">
       <EventList events={events} />
     </div>
   );
