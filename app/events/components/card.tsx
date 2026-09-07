@@ -3,7 +3,15 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EllipsisHorizontalIcon } from "@heroicons/react/16/solid";
 import React from "react";
 
-const Card = ({ event }: { event: Event }) => {
+const Card = ({
+  event,
+  onDelete,
+  onEdit,
+}: {
+  event: Event;
+  onDelete: (id: string) => void;
+  onEdit: (event: Event) => void;
+}) => {
   return (
     <li
       key={event.id}
@@ -27,20 +35,22 @@ const Card = ({ event }: { event: Event }) => {
             className="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-gray-800 py-2 outline-1 -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-leave:duration-75 data-enter:ease-out data-leave:ease-in"
           >
             <MenuItem>
-              <a
-                href="#"
-                className="block px-3 py-1 text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-none"
+              <button
+                type="button"
+                onClick={() => onEdit(event)}
+                className="block px-3 py-1 text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-none data-focus:rounded-md data-focus:w-full data-focus:text-left"
               >
                 Edit<span className="sr-only">, {event.name}</span>
-              </a>
+              </button>
             </MenuItem>
             <MenuItem>
-              <a
-                href="#"
-                className="block px-3 py-1 text-sm/6 text-red-500 data-focus:bg-red-500/20 data-focus:outline-none data-focus:rounded-md"
+              <button
+                type="button"
+                onClick={() => onDelete(event.id)}
+                className="block px-3 py-1 text-sm/6 text-red-500 data-focus:bg-red-500/20 data-focus:outline-none data-focus:rounded-md data-focus:w-full data-focus:text-left"
               >
                 Delete<span className="sr-only">, {event.name}</span>
-              </a>
+              </button>
             </MenuItem>
           </MenuItems>
         </Menu>

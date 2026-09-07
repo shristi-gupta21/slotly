@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { toast } from "sonner";
 import Button from "@/components/button";
@@ -9,8 +10,11 @@ import {
   createEventSchema,
   fieldErrorsFromZod,
   GENRES,
+  type CreateEventInput,
   type EventFieldErrors,
+  type PatchEventInput,
 } from "@/lib/validations/events";
+import type { Event } from "@/app/generated/prisma/client";
 
 
 
@@ -36,13 +40,75 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-export default function CreateEventForm({ onClose }: { onClose: () => void }) {
+function toDateInputValue(value: Date | string) {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return date.toISOString().slice(0, 10);
+}
+
+function toTimeInputValue(value: Date | string) {
+  const date = typeof value === "string" ? new Date(value) : value;
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+function eventToFormValues(event: Event): CreateEventInput {
+  return {
+    eventName: event.name,
+    genre: event.genre,
+    capacity: event.capacity,
+    description: event.description ?? undefined,
+    eventCity: event.city,
+    venue: event.venue,
+    date: toDateInputValue(event.date),
+    time: toTimeInputValue(event.time),
+    contactName: event.contactName,
+    phone: event.phone,
+    email: event.email,
+  };
+}
+
+function changedFields(
+  initial: CreateEventInput,
+  next: CreateEventInput,
+): PatchEventInput {
+  const patch: PatchEventInput = {};
+
+  (Object.keys(next) as (keyof CreateEventInput)[]).forEach((key) => {
+    const nextValue = next[key] ?? "";
+    const initialValue = initial[key] ?? "";
+
+    if (key === "time") {
+      if (String(nextValue).slice(0, 5) !== String(initialValue).slice(0, 5)) {
+        patch.time = next.time;
+      }
+      return;
+    }
+
+    if (nextValue !== initialValue) {
+      (patch as CreateEventInput)[key] = next[key] as never;
+    }
+  });
+
+  return patch;
+}
+
+export default function CreateEventForm({
+  onClose,
+  event,
+}: {
+  onClose: () => void;
+  event?: Event | null;
+}) {
+  const router = useRouter();
   const [errors, setErrors] = useState<EventFieldErrors>({});
+  const isEdit = Boolean(event);
+  const defaults = event ? eventToFormValues(event) : undefined;
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
+    formEvent.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(formEvent.currentTarget);
     const result = createEventSchema.safeParse({
       eventName: fieldValue(formData, "eventName"),
       genre: fieldValue(formData, "genre"),
@@ -63,28 +129,54 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
     }
 
     setErrors({});
-    console.log(result.data);
-    const response = await fetch('/api/events', {
-      method:'POST',
-      body: JSON.stringify(result.data),
-    })
-    if(!response.ok) {
-      const error = await response.json();
-      setErrors(error);
-    return;
+
+    const url = isEdit ? `/api/events/${event!.id}` : "/api/events";
+    let body: CreateEventInput | PatchEventInput = result.data;
+
+    if (isEdit && defaults) {
+      body = changedFields(defaults, result.data);
+      if (Object.keys(body).length === 0) {
+        onClose();
+        return;
+      }
     }
-    toast.success('Event created successfully');
+
+    const response = await fetch(url, {
+      method: isEdit ? "PATCH" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+
+      if (response.status === 400 && error?.fieldErrors) {
+        setErrors(error.fieldErrors);
+        return;
+      }
+
+      toast.error("Please try again later");
+      return;
+    }
+
+    toast.success(
+      isEdit ? "Event updated successfully" : "Event created successfully",
+    );
     onClose();
+    router.push("/events");
+    router.refresh();
   }
 
   return (
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="max-h-[85vh] w-[800px] max-w-full overflow-y-auto bg-gray-800/50  outline-1 -outline-offset-1 outline-white/10 sm:rounded-xl"
+      className="max-h-[85vh] w-[800px] max-w-full overflow-y-auto bg-gray-800/90  outline-1 -outline-offset-1 outline-white/10 sm:rounded-xl"
     >
       <div className="px-4 py-6 sm:p-8">
-        <h2 className="text-base font-semibold text-white">Create event</h2>
+        <h2 className="text-base font-semibold text-white">
+          {isEdit ? "Edit event" : "Create event"}
+        </h2>
         <div className="mt-6 grid max-w-3xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="col-span-full">
             <label
@@ -98,6 +190,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 id="eventName"
                 name="eventName"
                 type="text"
+                defaultValue={defaults?.eventName ?? ""}
                 aria-invalid={Boolean(errors.eventName)}
                 aria-describedby={
                   errors.eventName ? "eventName-error" : undefined
@@ -119,7 +212,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
               <select
                 id="genre"
                 name="genre"
-                defaultValue=""
+                defaultValue={defaults?.genre ?? ""}
                 aria-invalid={Boolean(errors.genre)}
                 aria-describedby={errors.genre ? "genre-error" : undefined}
                 className={selectClassName}
@@ -153,6 +246,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 type="number"
                 min={1}
                 inputMode="numeric"
+                defaultValue={defaults?.capacity ?? ""}
                 aria-invalid={Boolean(errors.capacity)}
                 aria-describedby={
                   errors.capacity ? "capacity-error" : undefined
@@ -175,6 +269,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 id="description"
                 name="description"
                 rows={3}
+                defaultValue={defaults?.description ?? ""}
                 className={inputClassName}
               />
             </div>
@@ -191,7 +286,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
               <select
                 id="eventCity"
                 name="eventCity"
-                defaultValue=""
+                defaultValue={defaults?.eventCity ?? ""}
                 aria-invalid={Boolean(errors.eventCity)}
                 aria-describedby={
                   errors.eventCity ? "eventCity-error" : undefined
@@ -225,6 +320,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 id="venue"
                 name="venue"
                 type="text"
+                defaultValue={defaults?.venue ?? ""}
                 aria-invalid={Boolean(errors.venue)}
                 aria-describedby={errors.venue ? "venue-error" : undefined}
                 className={inputClassName}
@@ -245,6 +341,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 id="date"
                 name="date"
                 type="date"
+                defaultValue={defaults?.date ?? ""}
                 aria-invalid={Boolean(errors.date)}
                 aria-describedby={errors.date ? "date-error" : undefined}
                 className={inputClassName}
@@ -265,6 +362,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 id="time"
                 name="time"
                 type="time"
+                defaultValue={defaults?.time ?? ""}
                 aria-invalid={Boolean(errors.time)}
                 aria-describedby={errors.time ? "time-error" : undefined}
                 className={inputClassName}
@@ -286,6 +384,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 name="contactName"
                 type="text"
                 autoComplete="name"
+                defaultValue={defaults?.contactName ?? ""}
                 aria-invalid={Boolean(errors.contactName)}
                 aria-describedby={
                   errors.contactName ? "contactName-error" : undefined
@@ -309,6 +408,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 name="phone"
                 type="tel"
                 autoComplete="tel"
+                defaultValue={defaults?.phone ?? ""}
                 aria-invalid={Boolean(errors.phone)}
                 aria-describedby={errors.phone ? "phone-error" : undefined}
                 className={inputClassName}
@@ -330,6 +430,7 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
                 name="email"
                 type="email"
                 autoComplete="email"
+                defaultValue={defaults?.email ?? ""}
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? "email-error" : undefined}
                 className={inputClassName}
@@ -341,7 +442,11 @@ export default function CreateEventForm({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="flex items-center justify-end gap-x-4 border-t border-white/10 px-4 py-4 sm:px-8">
-        <Button type="submit" label="Create event" size="md" />
+        <Button
+          type="submit"
+          label={isEdit ? "Save changes" : "Create event"}
+          size="md"
+        />
       </div>
     </form>
   );
