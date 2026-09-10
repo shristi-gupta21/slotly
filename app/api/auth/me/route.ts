@@ -1,36 +1,35 @@
 import prisma from "@/lib/prisma";
+import { readSessionToken } from "@/lib/session";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const cookieStore = await cookies();
-    const session = cookieStore.get("session");
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session");
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const userId = await prisma.user.findUnique({
-      where: {
-        id: session.value,
-      },
-    });
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    return NextResponse.json({
-      id: userId.id,
-      email: userId.email,
-      role: userId.role,
-    });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+
+  let payload: { userId: string; role: string };
+  
+  try {
+    payload = await readSessionToken(session?.value ?? "");
+  } catch {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: payload.userId },
+  });
+
+  if (!user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  return NextResponse.json({
+    id: user?.id,
+    email: user?.email,
+    role: user?.role,
+  });
 }
