@@ -1,3 +1,4 @@
+import { requireOrganiser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { fieldErrorsFromZod, patchEventSchema } from "@/lib/validations/events";
 import { NextResponse } from "next/server";
@@ -34,6 +35,12 @@ export async function PATCH(
 ) {
   try {
     const { id } = await context.params;
+
+    const auth = await requireOrganiser("Only organisers can update events");
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const body = await request.json();
     const result = patchEventSchema.safeParse(body);
 
@@ -45,6 +52,8 @@ export async function PATCH(
         { status: 400 },
       );
     }
+
+
 
     const data: {
       name?: string;
@@ -88,6 +97,16 @@ export async function PATCH(
       );
     }
 
+    if (
+      eventResult.organiserId &&
+      eventResult.organiserId !== auth.user.id
+    ) {
+      return NextResponse.json(
+        { message: "Only the event organiser can update this event" },
+        { status: 403 },
+      );
+    }
+
     const event = await prisma.event.update({ where: { id }, data });
 
     return NextResponse.json(event, { status: 200 });
@@ -95,7 +114,7 @@ export async function PATCH(
     console.error(error);
     return NextResponse.json(
       {
-        mesasage: "Please try again later",
+        message: "Please try again later",
       },
       { status: 500 },
     );
@@ -110,6 +129,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
+
+    const auth = await requireOrganiser("Only organisers can delete events");
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const eventResult = await prisma.event.findUnique({ where: { id } });
     if (!eventResult) {
       return NextResponse.json(
@@ -119,18 +144,20 @@ export async function DELETE(
         { status: 404 },
       );
     }
-    const result = await prisma.event.delete({
-      where: { id },
-    });
 
-    if (!result) {
+    if (
+      eventResult.organiserId &&
+      eventResult.organiserId !== auth.user.id
+    ) {
       return NextResponse.json(
-        {
-          message: "Event not found",
-        },
-        { status: 404 },
+        { message: "Only the event organiser can delete this event" },
+        { status: 403 },
       );
     }
+
+    await prisma.event.delete({
+      where: { id },
+    });
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
