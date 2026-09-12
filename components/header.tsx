@@ -6,7 +6,7 @@ import { BellIcon } from "@heroicons/react/24/outline";
 import Button from "./button";
 import { useState } from "react";
 import Modal from "./modal";
-import CreateEventForm from "@/app/events/components/create-event-form";
+import CreateEventForm from "@/app/(app)/events/components/create-event-form";
 
 export default function Header() {
   const [showModal, setShowModal] = useState(false);
