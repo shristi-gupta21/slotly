@@ -8,6 +8,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import {
+  ArrowLeftStartOnRectangleIcon,
   Bars3Icon,
   CalendarIcon,
   DocumentDuplicateIcon,
@@ -15,6 +16,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -25,6 +27,10 @@ const navigation = [
     icon: DocumentDuplicateIcon,
     current: false,
   },
+];
+
+const logout = [
+  { name: "Logout", href: "/login", icon: ArrowLeftStartOnRectangleIcon, current: false },
 ];
 
 function classNames(...classes: string[]) {
@@ -72,10 +78,12 @@ function Sidebar() {
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
                 <div className="relative flex h-16 shrink-0 items-center">
-                  <img
+                  <Image
                     alt="Your Company"
                     src="/logo.svg"
                     className="h-8 w-auto"
+                    width={32}
+                    height={32}
                   />
                 </div>
                 <nav className="flex flex-1 flex-col">
@@ -115,14 +123,19 @@ function Sidebar() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 px-6">
             <div className="flex h-16 shrink-0 items-center">
-              <img
+              <Image
                 alt="Your Company"
                 src="/logo.svg"
                 className="h-8 w-auto"
+                width={32}
+                height={32}
               />
             </div>
-            <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
+            <nav className="flex flex-1 flex-col ">
+              <ul
+                role="list"
+                className="flex flex-1 flex-col gap-y-7 justify-between"
+              >
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
@@ -147,20 +160,36 @@ function Sidebar() {
                   </ul>
                 </li>
 
-                <li className="-mx-6 mt-auto">
-                  <a
-                    href="#"
-                    className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-white/5"
-                  >
-                    <img
-                      alt=""
-                      src="/logo.svg"
-                      className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
-                    />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
-                  </a>
-                </li>
+                <ul className="flex flex-col gap-y-2 mb-6">
+                  <li className="-mx-6 mt-auto">
+                    <a
+                      href="#"
+                      className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-white/5"
+                    >
+                      <Image
+                        alt=""
+                        src="/logo.svg"
+                        className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
+                        width={32}
+                        height={32}
+                      />
+                      <span className="sr-only">Your profile</span>
+                      <span aria-hidden="true">John Doe</span>
+                    </a>
+                  </li>
+                  {logout.map((item) => (
+                    <li key={item.name} className="-mx-6 mt-auto">
+                      <a
+                        href={item.href}
+                        className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-400 hover:bg-white/5 hover:text-white"
+                      >
+                        <item.icon className="size-6 shrink-0" />
+                        <span className="sr-only">Logout</span>
+                        <span aria-hidden="true">{item.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </ul>
             </nav>
           </div>
@@ -180,10 +209,12 @@ function Sidebar() {
           </div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <img
+            <Image
               alt=""
               src="/logo.svg"
               className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
+              width={32}
+              height={32}
             />
           </a>
         </div>

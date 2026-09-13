@@ -44,3 +44,6 @@ next-env.d.ts
 .windsurf/
 
 /app/generated/prisma
+
+# curl cookie jars (contain session tokens)
+cookies.txt

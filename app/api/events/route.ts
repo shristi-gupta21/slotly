@@ -1,3 +1,4 @@
+import { requireOrganiser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
   createEventSchema,
@@ -15,6 +16,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireOrganiser("Only organisers can create events");
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const body = await request.json();
     const result = createEventSchema.safeParse(body);
 
@@ -24,6 +30,8 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+   
 
     const event = await prisma.event.create({
       data: {
@@ -38,11 +46,12 @@ export async function POST(request: Request) {
         phone: result.data.phone,
         email: result.data.email,
         description: result.data.description,
+        organiserId: auth.user.id,
       },
     });
 
     return NextResponse.json(event, { status: 201 });
-  } catch(error) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       {
