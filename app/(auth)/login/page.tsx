@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type AuthTab = "signin" | "register";
 
@@ -10,7 +12,58 @@ const inputClassName =
 
 export default function Login() {
   const [tab, setTab] = useState<AuthTab>("signin");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
   const isSignIn = tab === "signin";
+  const router = useRouter();
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type, checked, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isSignIn) {
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          router.push("/dashboard");
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setTab("signin");
+          toast.success('Account created successfully');
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   return (
     <div className="flex min-h-full flex-col justify-center w-full px-4 sm:px-6 lg:px-8">
@@ -54,10 +107,7 @@ export default function Login() {
             </button>
           </div>
 
-          <form
-            className="mt-8 space-y-6"
-            onSubmit={(event) => event.preventDefault()}
-          >
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="email"
@@ -73,6 +123,8 @@ export default function Login() {
                   required
                   autoComplete="email"
                   className={inputClassName}
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -92,6 +144,8 @@ export default function Login() {
                   required
                   autoComplete={isSignIn ? "current-password" : "new-password"}
                   className={inputClassName}
+                  value={formData.password}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -103,9 +157,11 @@ export default function Login() {
                     <div className="group grid size-4 grid-cols-1">
                       <input
                         id="remember-me"
-                        name="remember-me"
+                        name="rememberMe"
                         type="checkbox"
-                        className="col-start-1 row-start-1 appearance-none rounded border border-white/10 bg-white/5 checked:border-indigo-500 checked:bg-indigo-500 indeterminate:border-indigo-500 indeterminate:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                        className="col-start-1 row-start-1 size-4 appearance-none rounded border border-white/10 bg-white/5 checked:border-indigo-500 checked:bg-indigo-500 indeterminate:border-indigo-500 indeterminate:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                        checked={formData.rememberMe}
+                        onChange={handleChange}
                       />
                       <svg
                         fill="none"
