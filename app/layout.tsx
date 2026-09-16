@@ -28,9 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const auth  = await getCurrentUser();
-  const user = 'user' in auth ? auth.user : null;
-  return (
+   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}

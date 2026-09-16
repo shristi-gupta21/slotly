@@ -7,12 +7,34 @@ import Button from "./button";
 import { useState } from "react";
 import Modal from "./modal";
 import CreateEventForm from "@/app/(app)/events/components/create-event-form";
+import { useUser } from "./context/user-provider";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const user = useUser();
+  const router = useRouter();
+
   const [showModal, setShowModal] = useState(false);
+
   const handleCreateEvent = () => {
     setShowModal(true);
   };
+
+  const handleBecomeOrganiser = async () => {
+    const result = await fetch("/api/auth/become-organiser", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (result.ok) {
+      toast.success("You are now an organiser");
+      router.refresh();
+    } else {
+      toast.error("Failed to become an organiser");
+    }
+  };
+
   return (
     <Disclosure
       as="header"
@@ -35,11 +57,19 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center gap-4">
-            <Button
-              label="Create Event"
-              size="md"
-              onClick={handleCreateEvent}
-            />
+            {user && user.role === "organiser" ? (
+              <Button
+                label="Create Event"
+                size="md"
+                onClick={handleCreateEvent}
+              />
+            ) : (
+              <Button
+                label="Become an Organiser"
+                size="md"
+                onClick={handleBecomeOrganiser}
+              />
+            )}
             <button
               type="button"
               className="relative shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
@@ -53,7 +83,7 @@ export default function Header() {
       </div>
       {showModal && (
         <Modal open={showModal} onClose={() => setShowModal(false)}>
-          <CreateEventForm  onClose={() => setShowModal(false)}/>
+          <CreateEventForm onClose={() => setShowModal(false)} />
         </Modal>
       )}
     </Disclosure>
