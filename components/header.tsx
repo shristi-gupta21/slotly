@@ -16,12 +16,14 @@ export default function Header() {
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
+  const [isBecomingOrganiser, setIsBecomingOrganiser] = useState(false);
 
   const handleCreateEvent = () => {
     setShowModal(true);
   };
 
   const handleBecomeOrganiser = async () => {
+    setIsBecomingOrganiser(true);
     const result = await fetch("/api/auth/become-organiser", {
       method: "POST",
       credentials: "include",
@@ -33,6 +35,7 @@ export default function Header() {
     } else {
       toast.error("Failed to become an organiser");
     }
+    setIsBecomingOrganiser(false);
   };
 
   return (
@@ -65,9 +68,10 @@ export default function Header() {
               />
             ) : (
               <Button
-                label="Become an Organiser"
+                label={isBecomingOrganiser ? "Becoming an Organiser..." : "Become an Organiser"}
                 size="md"
                 onClick={handleBecomeOrganiser}
+                disabled={isBecomingOrganiser}
               />
             )}
             <button

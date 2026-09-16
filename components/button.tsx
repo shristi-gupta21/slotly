@@ -14,6 +14,7 @@ type ButtonProps = {
   label: string;
   size?: ButtonSize;
   className?: string;
+  disabled?: boolean;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "size">;
 
 const baseStyles =
@@ -24,12 +25,14 @@ export default function Button({
   size = "md",
   className,
   type = "button",
+  disabled = false,
   ...props
 }: ButtonProps) {
   return (
     <button
       type={type}
-      className={[baseStyles, sizeStyles[size], className]
+      disabled={disabled}
+      className={[baseStyles, sizeStyles[size], className, disabled && "opacity-50 cursor-not-allowed"]
         .filter(Boolean)
         .join(" ")}
       {...props}
