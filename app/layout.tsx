@@ -30,7 +30,6 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const auth  = await getCurrentUser();
   const user = 'user' in auth ? auth.user : null;
-  console.log(user);
   return (
     <html
       lang="en"
