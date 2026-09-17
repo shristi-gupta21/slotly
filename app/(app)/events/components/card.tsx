@@ -26,7 +26,7 @@ const Card = ({
   onEdit: (event: Event) => void;
 }) => {
   const user  = useUser();
-  const isOrganiser = user?.role === "organiser";
+  const isOrganiser = user?.id === event.organiserId;
   const {
     date,
     capacity,
