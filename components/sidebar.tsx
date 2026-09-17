@@ -15,9 +15,10 @@ import {
   HomeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useUser } from "./context/user-provider";
+import { toast } from "sonner";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -42,8 +43,23 @@ function Sidebar() {
   const user = useUser();
   const email = user?.email;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   const pathname = usePathname();
+
+  const handleLogout = async () => {
+   const result = await fetch('/api/auth/logout',{
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    if (result.ok) {
+      router.refresh();
+      router.push('/login');
+    } else {
+      toast.error("Failed to logout");
+    }
+  }
   return (
     <>
       <div>
@@ -79,7 +95,7 @@ function Sidebar() {
               </TransitionChild>
 
               {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
+              <div className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-black/90 px-6 pb-2 ring-1 ring-white/10">
                 <div className="relative flex h-16 shrink-0 items-center">
                   <Image
                     alt="Your Company"
@@ -89,7 +105,7 @@ function Sidebar() {
                     height={32}
                   />
                 </div>
-                <nav className="flex flex-1 flex-col">
+                <nav className="flex flex-1 flex-col justify-between">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
                       <ul role="list" className="-mx-2 space-y-1">
@@ -179,7 +195,7 @@ function Sidebar() {
                   {logout.map((item) => (
                     <li key={item.name} className="-mx-6 mt-auto">
                       <a
-                        href={item.href}
+                        onClick={handleLogout}
                         className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-400 hover:bg-white/5 hover:text-white"
                       >
                         <item.icon className="size-6 shrink-0" />
@@ -208,13 +224,9 @@ function Sidebar() {
           </div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <Image
-              alt=""
-              src="/logo.svg"
-              className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
-              width={32}
-              height={32}
-            />
+            <div className="size-8 rounded-full bg-gray-800  outline-1 -outline-offset-1 outline-white/10 flex items-center justify-center">
+              {email && email.slice(0, 2).toUpperCase()}
+            </div>
           </a>
         </div>
       </div>
