@@ -17,6 +17,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useUser } from "./context/user-provider";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -38,6 +39,8 @@ function classNames(...classes: string[]) {
 }
 
 function Sidebar() {
+  const user = useUser();
+  const email = user?.email;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const pathname = usePathname();
@@ -164,17 +167,13 @@ function Sidebar() {
                   <li className="-mx-6 mt-auto">
                     <a
                       href="#"
-                      className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-white/5"
+                      className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white"
                     >
-                      <Image
-                        alt=""
-                        src="/logo.svg"
-                        className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
-                        width={32}
-                        height={32}
-                      />
+                      <div className="size-8 rounded-full bg-gray-800  outline-1 -outline-offset-1 outline-white/10 flex items-center justify-center">
+                        {email && email.slice(0, 2).toUpperCase()}
+                      </div>
                       <span className="sr-only">Your profile</span>
-                      <span aria-hidden="true">John Doe</span>
+                      <span aria-hidden="true">{email}</span>
                     </a>
                   </li>
                   {logout.map((item) => (

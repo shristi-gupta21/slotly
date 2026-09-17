@@ -1,4 +1,5 @@
 import { Event } from "@/app/generated/prisma/client";
+import { useUser } from "@/components/context/user-provider";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EllipsisHorizontalIcon } from "@heroicons/react/16/solid";
 import React from "react";
@@ -24,6 +25,8 @@ const Card = ({
   onDelete: (id: string) => void;
   onEdit: (event: Event) => void;
 }) => {
+  const user  = useUser();
+  const isOrganiser = user?.role === "organiser";
   const {
     date,
     capacity,
@@ -57,7 +60,7 @@ const Card = ({
             <span className="text-sm/6 text-white">{description}</span>
           ) : null}
         </div>
-        <Menu as="div" className="relative ml-auto">
+       {isOrganiser&& <Menu as="div" className="relative ml-auto">
           <MenuButton className="relative block text-gray-400 hover:text-white">
             <span className="absolute -inset-2.5" />
             <span className="sr-only">Open options</span>
@@ -86,13 +89,13 @@ const Card = ({
               </button>
             </MenuItem>
           </MenuItems>
-        </Menu>
+        </Menu>}
       </div>
       <dl className="-my-3 divide-y divide-white/10 px-6 py-4 text-sm/6">
         {details.map(({ label, value, dateTime }) => (
           <div key={label} className="flex justify-between gap-x-4 py-3">
             <dt className="text-gray-400">{label}</dt>
-            <dd className="font-medium text-white">
+            <dd className="font-medium text-white truncate max-w-[180px] text-ellipsis">
               {dateTime ? <time dateTime={dateTime}>{value}</time> : value}
             </dd>
           </div>
