@@ -51,6 +51,7 @@ model Event {
   updatedAt   DateTime @updatedAt
   organiser   User?    @relation(fields: [organiserId], references: [id])
   organiserId String?
+  bookings    Booking[]
 }
 
 enum Role {
@@ -68,4 +69,17 @@ model User {
   events                 Event[]
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
+  bookings               Booking[]
+}
+
+model Booking {
+  id           String   @id @default(cuid())
+  seats        Int
+  attendeeName String
+  attendeeEmail String
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  event        Event    @relation(fields: [eventId], references: [id])
+  eventId      String
+  createdAt    DateTime @default(now())
 }
