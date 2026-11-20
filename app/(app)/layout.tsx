@@ -10,6 +10,7 @@ export default async function AppLayout({
 }) {
   const auth = await getCurrentUser();
   const user = "user" in auth ? auth.user : null;
+
   return (
     <UserProvider user={user}>
       <div className="min-h-full flex">

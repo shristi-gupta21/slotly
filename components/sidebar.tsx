@@ -60,6 +60,10 @@ function Sidebar() {
       toast.error("Failed to logout");
     }
   }
+
+  console.log(user);
+  console.log(email);
+  
   return (
     <>
       <div>
